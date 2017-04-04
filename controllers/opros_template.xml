@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="person_opros">
+            <t t-call="website.layout">
+                <div class="oe_structure">
+                    <div class="container">
+                        <t t-set="title">Опрос</t>
+
+                        <!--<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>-->
+                        <script src='https://www.google.com/recaptcha/api.js'></script>
+                        <style type="text/css">
+                            option:disabled {
+                            display: none;
+                            }
+                        </style>
+                        <!--<script type="text/javascript">-->
+                        <!--function showRegions(){-->
+                        <!--var regions = document.getElementById("region");-->
+
+                        <!--var i;-->
+                        <!--for (i=0; i&lt;regions.length; i++){-->
+                        <!--regions[i].selected = regions[i].defaultSelected;}-->
+
+                        <!--var countries = document.getElementById("country");-->
+                        <!--var country = countries.options[countries.selectedIndex].value;-->
+
+                        <!--for(i=0; i&lt;regions.length; i++) {-->
+                        <!--if(regions.options[i].getAttribute('country')!=country)-->
+                        <!--regions.options[i].disabled = true;-->
+                        <!--else regions.options[i].disabled = false;-->
+                        <!--}-->
+                        <!--};-->
+
+                        <!--</script>-->
+                        <script type="text/javascript" src="/opros/static/src/js/script.js"/>
+                        <div class="container">
+                            <!--alert(countries.options[countries.selectedIndex].value +' '+);-->
+                            <div style="box-shadow:0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19); margin:5px;">
+                                <div class="panel panel-default o_panel s_panel">
+                                    <div class="panel-heading ">
+                                        <h3 class="panel-title o_default_snippet_text">Интернет-голосование</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="w3-card-4">
+                                            <!--<p>IP: <t t-esc="ip"/></p>-->
+
+                                            <form class="w3-container" method="POST">
+                                                <!--email-->
+                                                <div class="form-group">
+                                                    <!--Если письмо не отправилось выводим сообщение-->
+                                                    <!--<p><strong style="color:red;"><t t-esc="message_email"/></strong></p>-->
+                                                    <!--<div class="row">-->
+                                                    <!--<label for="InputEmail" class="col-sm-2 col-md-2 control-label mt8" >Введите Ваш email</label>-->
+                                                    <!--<div class="col-sm-10 col-md-10">-->
+                                                    <!--<div class="input-group">-->
+                                                    <!--<span class="input-group-addon">@</span>-->
+                                                    <input type="email" class="form-control" name="email" t-att-value="email" required="required" id="InputEmail" placeholder="Введите Ваш email..."/>
+                                                    <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--</div>-->
+                                                    <div style="color:#337ab7;">На введенный Вами адрес электронной почты придет письмо, содержащее секретный ключ!</div>
+                                                </div>
+                                                <!--Возраст-->
+                                                <div class="form-group">
+                                                    <p><strong style="color:red;"><t t-esc="message_age"/></strong></p>
+                                                    <select class="form-control" name="age" id="age" required="required">
+                                                        <t t-if="not age">
+                                                            <option value=""  disabled="disabled" selected="selected">Ваш возраст...</option>
+                                                        </t>
+                                                        <t t-foreach="range(15,100)" t-as="i">
+                                                            <t t-if="int(age)==i">
+                                                                <option t-att-value="i" selected="selected"><t t-esc="i"/></option>
+                                                            </t>
+                                                            <option t-att-value="i"><t t-esc="i"/></option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                                <!--Страна-->
+                                                <div class="form-group">
+                                                    <p><strong style="color:red;"><t t-esc="message_country"/></strong></p>
+                                                    <!--<select class="form-control" name="country" id="country" onchange="showRegions()" required="required">-->
+                                                    <select class="form-control" name="country" id="country" onchange="call_ajax()" required="required">
+                                                        <t t-if="not country">
+                                                            <option value=""  disabled="disabled" selected="selected">Страна...</option>
+                                                        </t>
+                                                        <t t-foreach="countries" t-as="country_item">
+                                                            <t t-if="int(country)==country_item.country_id">
+                                                                <option t-att-value="country_item.country_id" selected="selected"><t t-esc="country_item.name"/></option>
+                                                            </t>
+                                                            <t t-if="int(country)!=country_item.country_id">
+                                                                <option t-att-value="country_item.country_id"><t t-esc="country_item.name"/></option>
+                                                            </t>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                                <!--Регион-->
+                                                <div class="form-group">
+                                                    <p><strong style="color:red;"><t t-esc="message_region"/></strong></p>
+                                                    <select class="form-control" name="region" id="region" required="required">
+                                                        <t t-if="not region">
+                                                            <option value=""  disabled="disabled" selected="selected">Регион...</option>
+                                                        </t>
+                                                        <!--<t t-if="region">-->
+                                                        <!--&lt;!&ndash;<option t-att-value="region.id" t-att-country="region.country_id" selected="selected"><t t-esc="region.name"/></option>&ndash;&gt;-->
+                                                        <!--<option value=""  disabled="disabled" selected="selected">Регион...</option>-->
+                                                        <!--<t t-foreach="regions" t-as="region_item">-->
+                                                        <!--<t t-if="int(country)==region_item.country_id">-->
+                                                        <!--<option t-att-value="region_item.id" t-att-country="region_item.country_id"><t t-esc="region_item.name"/></option>-->
+                                                        <!--</t>-->
+                                                        <!--</t>-->
+                                                        <!--</t>-->
+                                                    </select>
+                                                </div>
+                                                <!--<div class="form-group">-->
+                                                <!--<select class="form-control" name="region" id="region" required="required">-->
+
+                                                <!--<t t-if="not country">-->
+                                                <!--<t t-foreach="regions" t-as="region_item">-->
+                                                <!--<option t-att-value="region_item.id" t-att-country="region_item.country_id" disabled="disabled"><t t-esc="region_item.name"/></option>-->
+                                                <!--</t>-->
+                                                <!--</t>-->
+                                                <!--<t t-if="country">-->
+                                                <!--<t t-foreach="regions" t-as="region_item">-->
+                                                <!--<t t-if="int(region)==region_item.id">-->
+                                                <!--<option t-att-value="region_item.id" t-att-country="region_item.country_id" selected="selected"><t t-esc="region_item.name"/></option>-->
+                                                <!--</t>-->
+                                                <!--<t t-if="int(region)!=region_item.id">-->
+                                                <!--<option t-att-value="region_item.id" t-att-country="region_item.country_id" disabled="disabled"><t t-esc="region_item.name"/></option>-->
+                                                <!--</t>-->
+
+                                                <!--</t>-->
+                                                <!--</t>-->
+                                                <!--</select>-->
+                                                <!--</div>-->
+                                                <!--Пол-->
+                                                <div class="form-group">
+                                                    <p><strong>Пол</strong></p>
+                                                    <t t-if="sex=='male' or not sex">
+                                                        <label class="radio-inline"><input class="radio" type="radio" name="sex" value="male" checked="checked"/>Мужской</label>
+                                                        <label class="radio-inline"><input class="radio" type="radio" name="sex" value="female"/>Женский</label>
+                                                    </t>
+
+                                                    <t t-if="sex=='female'">
+                                                        <label class="radio-inline"><input class="radio" type="radio" name="sex" value="male"/>Мужской</label>
+                                                        <label class="radio-inline"><input class="radio" type="radio" name="sex" value="female" checked="checked"/>Женский</label>
+                                                    </t>
+                                                </div>
+                                                <!--Соц.сети-->
+                                                <div class="form-group">
+                                                    <p><strong>Какими социальными сетями вы пользуетесь чаще?</strong></p>
+                                                    <div class="checkbox">
+                                                        <t t-foreach="social_nets" t-as="social_net">
+                                                            <t t-if="social_net.id in soc_nets_ids">
+                                                                <label class="checkbox-inline">
+                                                                    <input type="checkbox" t-att-name="'social_net_ids_'+str(social_net.id)" t-att-value="social_net.id" checked="checked"/>
+                                                                    <t t-esc="social_net.name"/></label>
+                                                            </t>
+                                                            <t t-if="social_net.id not in soc_nets_ids">
+                                                                <label class="checkbox-inline">
+                                                                    <input type="checkbox" t-att-name="'social_net_ids_'+str(social_net.id)" t-att-value="social_net.id"/>
+                                                                    <t t-esc="social_net.name"/></label>
+                                                            </t>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                                <!--Название-->
+                                                <div class="form-group">
+                                                    <p><strong>Выберите лучшее название университета</strong></p>
+                                                    <t t-foreach="university_names" t-as="new_name">
+                                                        <p><strong style="color:red;"><t t-esc="message_name"/></strong></p>
+                                                        <t t-if="int(name)!=new_name.id">
+                                                            <p>
+                                                                <label class="radio-inline">
+                                                                    <input type="radio" name="name" t-att-value="new_name.id" required="required"/>
+                                                                    <t t-esc="new_name.name"/></label>
+                                                            </p>
+                                                        </t>
+                                                        <t t-if="int(name)==new_name.id">
+                                                            <p>
+                                                                <label class="radio-inline">
+                                                                    <input type="radio" name="name" t-att-value="new_name.id" checked="checked"/>
+                                                                    <t t-esc="new_name.name"/></label>
+                                                            </p>
+                                                        </t>
+                                                    </t>
+                                                </div>
+                                                <!--<strong style="color:red;"><t t-esc="message_captcha"/></strong>-->
+                                                <!--localhost-->
+                                                <!--<div class="g-recaptcha" name="grecaptcha" data-sitekey="6Lc_QwsUAAAAAPPwqD_-1gHxwr0uPU_kncj8rMGl"></div>-->
+                                                <!--who-->
+                                                <!--<div class="g-recaptcha" data-sitekey="6LcH5gsUAAAAAM7msmbhELaF89Ftr-_VbAHaYwWt"></div>-->
+                                                <!--<t t-esc="data_sitekey"/>-->
+                                                <t t-if="message_captcha">
+                                                    <div style="border: 5px solid red;" class="g-recaptcha" t-att-data-sitekey="data_sitekey"></div>
+                                                </t>
+                                                <t t-if="message_captcha==''">
+                                                    <div class="g-recaptcha" t-att-data-sitekey="data_sitekey"></div>
+                                                </t>
+                                                <br/>
+                                                <input type="submit" class="btn btn-primary btn-lg" style="width:100%;" name="vote" value="Голосовать!"/>
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="opros_code">
+            <t t-call="website.layout">
+                <div class="oe_structure">
+                    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                    <script type="text/javascript">
+                        google.charts.load("current", {packages:["corechart"]});
+                        google.charts.setOnLoadCallback(drawChart);
+                        function drawChart() {
+
+                        var data = google.visualization.arrayToDataTable(<t t-raw="chart_array"/>);
+
+                        var options = {
+                        title: 'Результаты голосования',
+                        pieHole: 0.4,
+                        };
+
+                        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                        chart.draw(data, options);
+                        }
+                    </script>
+
+                    <!--var data = google.visualization.arrayToDataTable([-->
+                    <!--['University name', 'Number of people voted'],-->
+                    <!--['Сибирский государственный аэрокосмический университет',     11],-->
+                    <!--['Сибирский государственный университет',     2],-->
+                    <!--['Сибирский аэрокосмический университет',     6],-->
+                    <!--['Сибирский государственный аэрокосмический',     8]-->
+                    <!--]);-->
+                    <div class="container">
+                        <div style="box-shadow:0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);  margin:5px;">
+
+
+                            <t t-set="title">Код подтверждения</t>
+                            <div class="panel panel-default o_panel s_panel">
+                                <div class="panel-heading ">
+                                    <h3 class="panel-title o_default_snippet_text">Введите код подтверждения</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <t t-if="not trial">
+                                        <form class="w3-container" action="/opros/code" method="POST" enctype="multipart/form-data">
+                                            <!--<p>age <t t-esc="age"/></p>-->
+                                            <!--<p>country <t t-esc="country"/></p>-->
+                                            <!--<p>region <t t-esc="region"/></p>-->
+                                            <!--<p>name <t t-esc="name"/></p>-->
+                                            <!--<p>sex <t t-esc="sex"/></p>-->
+                                            <!--<p>email <t t-esc="email"/></p>-->
+                                            <!--<p>secret code <t t-esc="secret_code"/></p>-->
+                                            <!--<p>user code <t t-esc="soc_nets_ids"/></p>-->
+                                            <!--<p>user code <t t-esc="user_code"/></p>-->
+                                            <input type="hidden" name="age" t-att-value="age"/>
+                                            <input type="hidden" name="country" t-att-value="country"/>
+                                            <input type="hidden" name="region" t-att-value="region"/>
+                                            <input type="hidden" name="name" t-att-value="name"/>
+                                            <input type="hidden" name="sex" t-att-value="sex"/>
+                                            <input type="hidden" name="email" t-att-value="email"/>
+                                            <input type="hidden" name="soc_nets_ids" t-att-value="soc_nets_ids"/>
+                                            <input type="hidden" name="secret_code" t-att-value="secret_code"/>
+                                            <input type="hidden" name="trial" t-att-value="trial"/>
+                                            <input type="hidden" name="ip" t-att-value="ip"/>
+                                            <!--<label class="w3-validate">Введите код подтверждения</label><br/>-->
+                                            <!--<p><strong style="color:red;">Осталось попыток: <t t-esc="trial"/></strong></p>-->
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input class="form-control" name="user_code" t-att-value="user_code" required="required"></input>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input type="submit" class="btn btn-default" name="accept" value="Принять"/>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        </form>
+                                    </t>
+
+                                    <t t-if="trial==1">
+                                        <strong style="color:red;" align="center">Ваш голос засчитан!</strong>
+                                        <t t-if="show_chart=='True'"><div id="donutchart" style="height: 500px;"></div></t>
+                                    </t>
+                                    <t t-if="trial==2">
+                                        <strong style="color:red;" align="center">Проверочный код введен неверно!</strong>
+                                    </t>
+                                    <t t-if="trial==3">
+                                        <strong style="color:red;" align="center">Пользователь с таким email уже голосовал!</strong>
+                                    </t>
+                                </div>
+                            </div>
+                            <!--<p>Массив для диаграммы: <t t-esc="chart_array"/></p>-->
+                            <!--<div id="chart_array" t-att-value="chart_array"/>-->
+                            <!--<p>university_names: <t t-esc="university_names"/></p>-->
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="20162017_62534762534765">
+            <t t-call="website.layout">
+                <div class="oe_structure">
+                    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                    <script type="text/javascript">
+                        google.charts.load("current", {packages:["corechart"]});
+                        google.charts.setOnLoadCallback(drawChart);
+                        function drawChart() {
+
+                        var data = google.visualization.arrayToDataTable(<t t-raw="chart_array"/>);
+
+                        var options = {
+                        title: 'Результаты голосования',
+                        pieHole: 0.4,
+                        };
+
+                        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                        chart.draw(data, options);
+                        }
+                    </script>
+
+                    <div id="donutchart" style="height: 500px;"></div>
+
+                </div>
+            </t>
+        </template>
+
+        <!--local host-->
+        <!--"recapcha_secret","id_recapcha_secret","6Lc_QwsUAAAAACR6d8un-pK-BPWmGh9NnILGbufq"-->
+        <!--"recapcha_data_sitekey","id_recapcha_data_sitekey","6Lc_QwsUAAAAAPPwqD_-1gHxwr0uPU_kncj8rMGl"-->
+
+        <!--who-->
+        <!--"recapcha_secret","id_recapcha_secret","6LcH5gsUAAAAAAKGzvupw5MslyNg4dJteFEDYcH0"-->
+        <!--"recapcha_data_sitekey","id_recapcha_data_sitekey","6LcH5gsUAAAAAM7msmbhELaF89Ftr-_VbAHaYwWt"-->
+    </data>
+</openerp>

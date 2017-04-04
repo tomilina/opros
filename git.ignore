@@ -1,0 +1,4 @@
+rm '.idea/misc.xml'
+rm '.idea/modules.xml'
+rm '.idea/opros.iml'
+rm '.idea/workspace.xml'

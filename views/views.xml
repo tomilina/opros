@@ -1,0 +1,107 @@
+<openerp>
+  <data>
+
+    <record model="ir.ui.view" id="opros.list">
+      <field name="name">opros list</field>
+      <field name="model">opros.record</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="age"/>
+          <field name="sex"/>
+          <field name="country"/>
+          <field name="region"/>
+          <field name="social_net_ids"/>
+          <field name="name"/>
+          <field name="remoteip"/>
+          <field name="headers"/>
+          <field name="headers_from"/>
+          <field name="email"/>
+        </tree>
+      </field>
+    </record>
+    <record model="ir.ui.view" id="country_list">
+      <field name="name">opros list</field>
+      <field name="model">opros.country</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="country_id"/>
+          <field name="region_ids"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="country_form">
+      <field name="name">opros form</field>
+      <field name="model">opros.country</field>
+      <field name="arch" type="xml">
+        <form>
+          <field name="name"/>
+          <field name="country_id"/>
+          <field name="region_ids"/>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="region_list">
+      <field name="name">opros list</field>
+      <field name="model">opros.region</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="region_id"/>
+          <field name="country_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="act_opros_record">
+      <field name="name">opros window</field>
+      <field name="res_model">opros.record</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="act_opros_social_net">
+      <field name="name">opros window</field>
+      <field name="res_model">opros.social_net</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="act_opros_university_name">
+      <field name="name">opros window</field>
+      <field name="res_model">opros.university_name</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="act_opros_country">
+      <field name="name">opros window</field>
+      <field name="res_model">opros.country</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="act_opros_region">
+      <field name="name">opros window</field>
+      <field name="res_model">opros.region</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Опрос" id="opros.menu_root"/>
+
+    <menuitem name="Таблицы" id="opros.tables" parent="opros.menu_root"/>
+
+    <menuitem name="Записи" id="opros.record" parent="opros.tables"
+              action="act_opros_record"/>
+
+    <menuitem name="Социальные сети" id="opros.social_net" parent="opros.tables"
+              action="act_opros_social_net"/>
+
+    <menuitem name="Названия университета" id="opros.university_name" parent="opros.tables"
+              action="act_opros_university_name"/>
+
+    <menuitem name="Страны" id="opros.country" parent="opros.tables"
+              action="act_opros_country"/>
+
+    <menuitem name="Регионы" id="opros.region" parent="opros.tables"
+              action="act_opros_region"/>
+  </data>
+</openerp>
